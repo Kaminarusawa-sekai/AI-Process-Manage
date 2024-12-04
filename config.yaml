@@ -1,0 +1,42 @@
+# config.yaml
+version: '1.0'
+
+# 系统基本信息
+system:
+  name: ProcessManager
+  version: 1.0.0
+  debug: true  # 开启调试模式
+
+# 日志配置
+logging:
+  level: DEBUG  # 设置日志级别：DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: logs/process_manager.log
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+# 数据库配置
+database:
+  type: postgresql  # 数据库类型
+  host: localhost   # 数据库主机地址
+  port: 5432        # 数据库端口
+  name: process_db  # 数据库名称
+  user: dbuser      # 数据库用户名
+  password: dbpass  # 数据库密码
+
+# API服务配置
+api:
+  host: 0.0.0.0     # API服务绑定的IP地址
+  port: 8080        # API服务监听的端口
+
+# 大模型相关配置
+models:
+
+  EMBEDDING_URL : "https://aichatlanba.openai.azure.com/openai/deployments/text-embedding-3-large/embeddings?api-version=2023-05-15"
+  OPENAI_API_KEY : "d4259c15567e44809c9629fae89583f8"
+  OPENAI_API_TYPE : "azure"
+  OPENAI_API_VERSION : "2023-03-15-preview"
+  AZURE_ENDPOINT : "https://aichatlanba.openai.azure.com/"  # 如果是远程调用模型API所需的密钥
+
+# 自优化配置
+optimization:
+  enabled: false    # 是否启用自优化功能
+  interval: 60      # 自优化检查间隔时间（秒）
