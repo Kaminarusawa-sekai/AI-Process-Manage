@@ -1,6 +1,3 @@
-import markdown
-from anytree import Node, RenderTree
-from bs4 import BeautifulSoup
 
 
 import langchain
@@ -8,16 +5,8 @@ from langchain_openai import AzureChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
+from models import model_api
 
-
-EMBEDDING_URL ="https://aichatlanba.openai.azure.com/openai/deployments/text-embedding-3-large/embeddings?api-version=2023-05-15"
-OPENAI_API_KEY = "d4259c15567e44809c9629fae89583f8"
-OPENAI_API_TYPE = "azure"
-OPENAI_API_VERSION = "2023-03-15-preview"
-AZURE_ENDPOINT="https://aichatlanba.openai.azure.com/"
-
-
-print(EMBEDDING_URL)
 
 
 
@@ -66,29 +55,15 @@ template = """
 
 """
 
-# 创建一个提示模板对象
-prompt = PromptTemplate(template=template, input_variables=["process_name","process_classfication"])
-
-# 初始化语言模型
-llm = AzureChatOpenAI(azure_endpoint=AZURE_ENDPOINT,
-                          openai_api_version=OPENAI_API_VERSION,
-                          openai_api_key=OPENAI_API_KEY,
-                          azure_deployment="gpt-4o",
-                          openai_api_type=OPENAI_API_TYPE,
-                          streaming=True,
-                          temperature=0.7)
-
-# 创建一个链
-chain = prompt|llm
 
 def get_process_prompt(process_name,process_classfication):
     input={
         "process_name":process_name,
         "process_classfication":process_classfication
     }
-    # 使用链来获取响应"https://aichatlanba.openai.azure.com/openai/deployments/text-embedding-3-large/embeddings?api-version=2023-05-15"
-    response = chain.invoke(input).content
     
+    response=model_api.excute(template,input)
+    # 使用链来获取响应"https://aichatlanba.openai.azure.com/openai/deployments/text-embedding-3-large/embeddings?api-version=2023-05-15"
     
     return response
 
