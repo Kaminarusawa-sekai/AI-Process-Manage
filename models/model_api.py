@@ -13,7 +13,7 @@ from configs import total_config
 
 
 
-config=total_config.load_config()
+config=total_config.load_config("../configs/config.yaml")
 def excute(templates,input_variables):
     EMBEDDING_URL=config['models']['EMBEDDING_URL']
     OPENAI_API_KEY=config['models']['OPENAI_API_KEY']
@@ -34,7 +34,11 @@ def excute(templates,input_variables):
 
     # 创建一个链
     chain = prompt|llm
-    response = chain.invoke(input).content
+    response = chain.invoke(input_variables).content
     
     
     return response
+
+# def excute_and_replay(templates,process_name,process_classfication,input_variables):
+
+

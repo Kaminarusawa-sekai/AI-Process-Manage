@@ -21,7 +21,7 @@ print(EMBEDDING_URL)
 
 # 定义一个更详细的提示模板
 template = """
-作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name}，流程的原定目标是{process_prompts}。流程执行的结果是{process_result}，对标目标的情况{goals_reviews}
+作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name}，对标目标的情况是{goals_reviews}
 请您根据流程的执行结果和对标目标的情况，评估流程的结果的状况。
 
 请确保您的总结和建议按照以下思路：
