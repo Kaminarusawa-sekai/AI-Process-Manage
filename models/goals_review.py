@@ -4,7 +4,17 @@ import langchain
 from langchain_openai import AzureChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
+from langchain.output_parsers import PydanticOutputParser
 
+from langchain_core.pydantic_v1 import BaseModel, Field
+from typing import List
+
+
+
+class BoInfo(BaseModel):
+    book_name: str = Field(description="书籍的名字")
+    author_name: str = Field(description="书籍的作者")
+    genres: List[str] = Field(description="书籍的体裁")
 
 
 EMBEDDING_URL ="https://aichatlanba.openai.azure.com/openai/deployments/text-embedding-3-large/embeddings?api-version=2023-05-15"
@@ -60,8 +70,12 @@ llm = AzureChatOpenAI(azure_endpoint=AZURE_ENDPOINT,
                           streaming=True,
                           temperature=0.7)
 
+
+output_parser = PydanticOutputParser().with_config({"introduction": ["my_chain"]})
+
+
 # 创建一个链
-chain = prompt|llm
+chain = prompt|llm|output_parser
 
 def get_process_goals_review(process_name,process_classfication,process_prompts,process_result):
     input={
