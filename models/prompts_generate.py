@@ -5,6 +5,9 @@ from langchain_openai import AzureChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
+
+from langchain.output_parsers.openai_tools import JsonOutputKeyToolsParser
+
 from models import model_api
 
 

@@ -11,10 +11,8 @@ from typing import List
 
 
 
-class BoInfo(BaseModel):
-    book_name: str = Field(description="书籍的名字")
-    author_name: str = Field(description="书籍的作者")
-    genres: List[str] = Field(description="书籍的体裁")
+class goals_review_instruction(BaseModel):
+    goals_review: str = Field(description="与目标对比的结果")
 
 
 EMBEDDING_URL ="https://aichatlanba.openai.azure.com/openai/deployments/text-embedding-3-large/embeddings?api-version=2023-05-15"
@@ -32,6 +30,7 @@ print(EMBEDDING_URL)
 template = """
 作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name}，流程的原定目标是{process_prompts}。流程执行的结果是{process_result}
 请您根据流程的执行结果，回顾是否和目标一致。
+{format_instructions}
 
 请确保您的总结和建议按照以下思路：
 1. 初始设置回顾
@@ -57,9 +56,11 @@ template = """
 信心水平：对实现新目标有多大信心？还需要做哪些准备以提高成功率？
 
 """
-
+output_parser = PydanticOutputParser(pydantic_object=goals_review_instruction)
 # 创建一个提示模板对象
-prompt = PromptTemplate(template=template, input_variables=["process_name","process_classfication","process_prompts","process_result"])
+prompt = PromptTemplate(template=template, 
+                        input_variables=["process_name","process_classfication","process_prompts","process_result"],
+                        partial_variables=output_parser.get_format_instructions())
 
 # 初始化语言模型
 llm = AzureChatOpenAI(azure_endpoint=AZURE_ENDPOINT,
@@ -69,10 +70,6 @@ llm = AzureChatOpenAI(azure_endpoint=AZURE_ENDPOINT,
                           openai_api_type=OPENAI_API_TYPE,
                           streaming=True,
                           temperature=0.7)
-
-
-output_parser = PydanticOutputParser().with_config({"introduction": ["my_chain"]})
-
 
 # 创建一个链
 chain = prompt|llm|output_parser

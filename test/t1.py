@@ -1,3 +1,4 @@
+import json
 from langchain_openai import ChatOpenAI
 from langchain.chains import LLMChain, SequentialChain
 from langchain.prompts import PromptTemplate
@@ -28,39 +29,55 @@ llm = AzureChatOpenAI(azure_endpoint=AZURE_ENDPOINT,
 one_template = """
 你是一个植物学家。给定花的名称和类型，你需要为这种花写一个200字左右的介绍。
 花名: {name}颜色: {color}
-植物学家: 这是关于上述花的介绍:
+植物学家: 这是关于上述花的介绍
+{format_instructions}
 """
+
+class one_out(BaseModel):
+    introduction: str = Field(description="在这里写下你介绍的结果")
+    name: str = Field(description="花的学名")
+    color: str = Field(description="花的颜色")
+
+# class OneOutParser(PydanticOutputParser):
+#     pydantic_object: one_out = one_out
+
+#     def parse(self, text):
+#         return super().parse(json.dumps({'introduction': text}))
+
+output_parser = PydanticOutputParser(pydantic_object=one_out)
+# output_parser = OneOutParser()
+
 one_prompt_template = PromptTemplate(
     template=one_template,
     input_variables=["name", "color"],
+    output_parser=output_parser,
+    partial_variables={"format_instructions": output_parser.get_format_instructions()}
 )
-class one_out(BaseModel):
-    introduction: str = Field(description="花卉介绍")
-
-output_parser = PydanticOutputParser(pydantic_object=one_out)
 introduction_chain=one_prompt_template|llm|output_parser
+print(introduction_chain.invoke({"name": "玫瑰", "color": "白色"}))
 # introduction_chain = LLMChain(
 #     llm=llm,
 #     prompt=one_prompt_template,
 #     output_key="introduction",
 # )
 
-two_template = """
-你是一位鲜花评论家。给定一种花的介绍，你需要为这种花写一篇200字左右的评论。
-鲜花介绍:{introduction}
-花评人对上述花的评论:
-"""
-two_prompt_template = PromptTemplate(
-    template=two_template,
-    input_variables=["introduction"],
-)
-class two_out(BaseModel):
-    review: str = Field(description="花卉评论")
+# two_template = """
+# 你是一位鲜花评论家。给定一种花的介绍，你需要为这种花写一篇200字左右的评论。
+# 鲜花介绍:{introduction}
+# 花评人对上述花的评论:
+# """
+# two_prompt_template = PromptTemplate(
+#     template=two_template,
+#     input_variables=["introduction"],
+    
+# )
+# class two_out(BaseModel):
+#     review: str = Field(description="花卉评论")
 
-review_chain=two_prompt_template|llm|PydanticOutputParser(pydantic_object=two_out)
+# review_chain=two_prompt_template|llm|PydanticOutputParser(pydantic_object=two_out)
 
 
-overall_chain = introduction_chain|review_chain|output_parser
-print(introduction_chain.invoke({"name": "玫瑰", "color": "红色"}))
-result = overall_chain({"name": "玫瑰", "color": "红色"})
-print(result)
+# overall_chain = introduction_chain|review_chain|output_parser
+
+# result = overall_chain({"name": "玫瑰", "color": "红色"})
+# print(result)

@@ -5,7 +5,13 @@ from langchain_openai import AzureChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
+from langchain_core.pydantic_v1 import BaseModel, Field
+from typing import List
 
+
+
+class reason_analysis_instruction(BaseModel):
+    goals_review: str = Field(description="与目标对比的结果")
 
 EMBEDDING_URL ="https://aichatlanba.openai.azure.com/openai/deployments/text-embedding-3-large/embeddings?api-version=2023-05-15"
 OPENAI_API_KEY = "d4259c15567e44809c9629fae89583f8"
@@ -87,15 +93,6 @@ def get_process_reason_analysis(process_name,process_classfication,process_promp
     return response
 
 
-
-
-
-if __name__ == "__main__":
-    # 用户输入示例
-    process_name = "1.1.4.1 定义战略愿景"
-    process_classfication="1 制定愿景和战略 1.1 定义业务理念和长期愿景 1.1.4 建立战略愿景"
-    requirements = get_process_goals_review(process_name,process_classfication)
-    print(requirements)
 
 
 
