@@ -9,7 +9,7 @@ from langchain.chains import LLMChain
 
 from configs import total_config
 
-from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.pydantic_v1 import BaseModel, Field,create_model
 from typing import List
 
 
@@ -39,17 +39,21 @@ def get_base_chain(templates,input_variables):
     chain = prompt|llm
     return chain
 
-def get_base_chain_with_output(templates,input_variables:dict,output_description:dict):
+def get_base_chain_with_output(templates,input_variables:dict,output_name:str,output_type:type,output_description:str):
     EMBEDDING_URL=config['models']['EMBEDDING_URL']
     OPENAI_API_KEY=config['models']['OPENAI_API_KEY']
     OPENAI_API_VERSION=config['models']['OPENAI_API_VERSION']
     OPENAI_API_TYPE=config['models']['OPENAI_API_TYPE']
     AZURE_ENDPOINT=config['models']['AZURE_ENDPOINT']
 
-    class output_instruction()
+    output_instruction=create_model(
+    'output_instruction',
+    output_name=(output_type, Field(..., description=output_description)))
+
+    
 
 
-    prompt = PromptTemplate(template=templates, input_variables=input_variables.keys)
+    prompt = PromptTemplate(template=templates, input_variables=input_variables.keys,partial_variables=output_instruction.get_format_instructions())
 
     # 初始化语言模型
     llm = AzureChatOpenAI(azure_endpoint=AZURE_ENDPOINT,
@@ -61,7 +65,7 @@ def get_base_chain_with_output(templates,input_variables:dict,output_description
                             temperature=0.7)
 
     # 创建一个链
-    chain = prompt|llm
+    chain = prompt|llm|output_instruction
     return chain
 
 def base_excute(templates,input_variables):

@@ -180,11 +180,27 @@ llm = AzureChatOpenAI(azure_endpoint=AZURE_ENDPOINT,
                           temperature=0.7)
 
 goals_review_output_parser = PydanticOutputParser(pydantic_object=goals_review_instruction)
-result_evalution=PydanticOutputParser(pydantic_object=result_evalution_instruction)
-reason_analysis=PydanticOutputParser(pydantic_object=reason_analysis_instruction)
-suggestion_provider=PydanticOutputParser(pydantic_object=suggestion_provider_instruction)
+result_evalution_output_parser=PydanticOutputParser(pydantic_object=result_evalution_instruction)
+reason_analysis_output_parser=PydanticOutputParser(pydantic_object=reason_analysis_instruction)
+suggestion_provider_output_parser=PydanticOutputParser(pydantic_object=suggestion_provider_instruction)
 
 goals_review_prompts=PromptTemplate(template=goals_review_template, 
                         input_variables=["process_name","process_classfication","process_prompts","process_result"],
-                        partial_variables=output_parser.get_format_instructions())
+                        partial_variables=goals_review_output_parser.get_format_instructions())
+result_evalution_prompts=PromptTemplate(template=result_evalution_template, 
+                        input_variables=["process_name","process_classfication","process_prompts","process_result"],
+                        partial_variables=result_evalution_output_parser.get_format_instructions())
+reason_analysis_prompts=PromptTemplate(template=reason_analysis_template, 
+                        input_variables=["process_name","process_classfication","process_prompts","process_result"],
+                        partial_variables=reason_analysis_output_parser.get_format_instructions())
+suggestion_provider_prompts=PromptTemplate(template=suggestion_provider_template, 
+                        input_variables=["process_name","process_classfication","process_prompts","process_result"],
+                        partial_variables=suggestion_provider_output_parser.get_format_instructions())
 
+goals_review_chain=goals_review_prompts|llm|goals_review_output_parser
+result_evalution_chain=result_evalution_prompts|llm|result_evalution_output_parser
+reason_analysis_chain=reason_analysis_prompts|llm|reason_analysis_output_parser
+suggestion_provider_chain=suggestion_provider_prompts|llm|suggestion_provider_output_parser
+
+all_chain=goals_review_chain|result_evalution_chain|reason_analysis_chain|suggestion_provider_chain
+all_chain.invoke()

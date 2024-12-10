@@ -6,11 +6,11 @@ from ..models import model_api
 class ModelProcessExcutor(Step):
     
 
-    def execute(self, prompt,context: Dict[str, Any]) -> Dict[str, Any]:
+    def execute(self, templates,input_variables=None):
         
-        model_api.excute()
+        response=model_api.base_excute(templates,input_variables)
 
-        return context
+        return response
     
     if __name__ == "__main__":
     # 用户输入示例
