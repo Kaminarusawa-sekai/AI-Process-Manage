@@ -203,4 +203,4 @@ reason_analysis_chain=reason_analysis_prompts|llm|reason_analysis_output_parser
 suggestion_provider_chain=suggestion_provider_prompts|llm|suggestion_provider_output_parser
 
 all_chain=goals_review_chain|result_evalution_chain|reason_analysis_chain|suggestion_provider_chain
-all_chain.invoke()
+print(all_chain.invoke(""))

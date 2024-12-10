@@ -17,35 +17,17 @@ from typing import List
 
 
 config=total_config.load_config("../configs/config.yaml")
-def get_base_chain(templates,input_variables):
+
+
+def get_base_chain(templates:str,input_variables:dict,output_name:str=None,output_type:type=None,output_description:str=None):
     EMBEDDING_URL=config['models']['EMBEDDING_URL']
     OPENAI_API_KEY=config['models']['OPENAI_API_KEY']
     OPENAI_API_VERSION=config['models']['OPENAI_API_VERSION']
     OPENAI_API_TYPE=config['models']['OPENAI_API_TYPE']
     AZURE_ENDPOINT=config['models']['AZURE_ENDPOINT']
-
-    prompt = PromptTemplate(template=templates, input_variables=input_variables.keys)
-
-    # 初始化语言模型
-    llm = AzureChatOpenAI(azure_endpoint=AZURE_ENDPOINT,
-                            openai_api_version=OPENAI_API_VERSION,
-                            openai_api_key=OPENAI_API_KEY,
-                            azure_deployment="gpt-4o",
-                            openai_api_type=OPENAI_API_TYPE,
-                            streaming=True,
-                            temperature=0.7)
-
-    # 创建一个链
-    chain = prompt|llm
-    return chain
-
-def get_base_chain_with_output(templates,input_variables:dict,output_name:str,output_type:type,output_description:str):
-    EMBEDDING_URL=config['models']['EMBEDDING_URL']
-    OPENAI_API_KEY=config['models']['OPENAI_API_KEY']
-    OPENAI_API_VERSION=config['models']['OPENAI_API_VERSION']
-    OPENAI_API_TYPE=config['models']['OPENAI_API_TYPE']
-    AZURE_ENDPOINT=config['models']['AZURE_ENDPOINT']
-
+    if output_name!=None:
+        if output_type==None:
+            raise Exception("No ")
     output_instruction=create_model(
     'output_instruction',
     output_name=(output_type, Field(..., description=output_description)))
@@ -68,13 +50,16 @@ def get_base_chain_with_output(templates,input_variables:dict,output_name:str,ou
     chain = prompt|llm|output_instruction
     return chain
 
-def base_excute(templates,input_variables):
+def base_excute(templates,input_variables,out):
     chain=get_base_chain(templates,input_variables)
     
     response = chain.invoke(input_variables).content
     
     
     return response
+
+def excute_and_replay(templates,input_variables):
+    chain
 
 
 
