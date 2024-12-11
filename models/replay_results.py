@@ -6,7 +6,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain.output_parsers import PydanticOutputParser
 
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 from typing import List
 
 EMBEDDING_URL ="https://aichatlanba.openai.azure.com/openai/deployments/text-embedding-3-large/embeddings?api-version=2023-05-15"
@@ -18,15 +18,23 @@ AZURE_ENDPOINT="https://aichatlanba.openai.azure.com/"
 print(EMBEDDING_URL)
 
 class goals_review_instruction(BaseModel):
+    process_name:str=Field(description="在这里填写流程的名字，即process_name")
+    process_classfication:str= Field(description="在这里填写流程的分类，即process_classfication")
     goals_review: str = Field(description="与目标对比的结果")
 
 class result_evalution_instruction(BaseModel):
+    process_name:str=Field(description="在这里填写流程的名字，即process_name")
+    process_classfication:str= Field(description="在这里填写流程的分类，即process_classfication")
     result_evalution:str=Field(description="流程的结果的状况是")
 
 class reason_analysis_instruction(BaseModel):
+    process_name:str=Field(description="在这里填写流程的名字，即process_name")
+    process_classfication:str= Field(description="在这里填写流程的分类，即process_classfication")
     reason_analysis:str=Field(description="出现问题的原因是")
 
 class suggestion_provider_instruction(BaseModel):
+    process_name:str=Field(description="在这里填写流程的名字，即process_name")
+    process_classfication:str= Field(description="在这里填写流程的分类，即process_classfication")
     suggestion_provider:str=Field(description="可能存在的建议是")
 
 def get_repaly_results_chain(input_variables):
@@ -186,16 +194,16 @@ def get_repaly_results_chain(input_variables):
 
     goals_review_prompts=PromptTemplate(template=goals_review_template, 
                             input_variables=["process_name","process_classfication","process_prompts","process_result"],
-                            partial_variables=goals_review_output_parser.get_format_instructions())
+                            partial_variables={"format_instructions": goals_review_output_parser.get_format_instructions()})
     result_evalution_prompts=PromptTemplate(template=result_evalution_template, 
                             input_variables=["process_name","process_classfication","process_prompts","process_result"],
-                            partial_variables=result_evalution_output_parser.get_format_instructions())
+                            partial_variables={"format_instructions": result_evalution_output_parser.get_format_instructions()})
     reason_analysis_prompts=PromptTemplate(template=reason_analysis_template, 
                             input_variables=["process_name","process_classfication","process_prompts","process_result"],
-                            partial_variables=reason_analysis_output_parser.get_format_instructions())
+                            partial_variables={"format_instructions": reason_analysis_output_parser.get_format_instructions()})
     suggestion_provider_prompts=PromptTemplate(template=suggestion_provider_template, 
                             input_variables=["process_name","process_classfication","process_prompts","process_result"],
-                            partial_variables=suggestion_provider_output_parser.get_format_instructions())
+                            partial_variables={"format_instructions": suggestion_provider_output_parser.get_format_instructions()})
 
     goals_review_chain=goals_review_prompts|llm|goals_review_output_parser
     result_evalution_chain=result_evalution_prompts|llm|result_evalution_output_parser
