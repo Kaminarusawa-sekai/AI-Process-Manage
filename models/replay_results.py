@@ -5,6 +5,8 @@ from langchain_openai import AzureChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain.output_parsers import PydanticOutputParser
+from langchain_core.output_parsers import JsonOutputParser
+
 
 from pydantic import BaseModel, Field
 from typing import List
@@ -20,12 +22,12 @@ print(EMBEDDING_URL)
 class goals_review_instruction(BaseModel):
     process_name:str=Field(description="在这里填写流程的名字，即process_name")
     process_classfication:str= Field(description="在这里填写流程的分类，即process_classfication")
-    goals_review: str = Field(description="与目标对比的结果")
+    goals_reviews: str = Field(description="与目标对比的结果")
 
 class result_evalution_instruction(BaseModel):
     process_name:str=Field(description="在这里填写流程的名字，即process_name")
     process_classfication:str= Field(description="在这里填写流程的分类，即process_classfication")
-    result_evalution:str=Field(description="流程的结果的状况是")
+    result_evalutions:str=Field(description="流程的结果的状况是")
 
 class reason_analysis_instruction(BaseModel):
     process_name:str=Field(description="在这里填写流程的名字，即process_name")
@@ -35,7 +37,7 @@ class reason_analysis_instruction(BaseModel):
 class suggestion_provider_instruction(BaseModel):
     process_name:str=Field(description="在这里填写流程的名字，即process_name")
     process_classfication:str= Field(description="在这里填写流程的分类，即process_classfication")
-    suggestion_provider:str=Field(description="可能存在的建议是")
+    suggestions:str=Field(description="可能存在的建议是")
 
 def get_repaly_results_chain(input_variables):
     # 定义一个更详细的提示模板
@@ -104,7 +106,7 @@ def get_repaly_results_chain(input_variables):
 
 
     reason_analysis_template = """
-    作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name},流程执行下来的评估情况是{result_evalution}
+    作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name},流程执行下来的评估情况是{result_evalutions}
     请您根据流程的执行结果和流程评估情况，评估出现问题的原因。
     {format_instructions}
 
@@ -143,7 +145,7 @@ def get_repaly_results_chain(input_variables):
     """
 
     suggestion_provider_template = """
-    作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name}，对流程执行可能存在的问题的分析是{result_evaluations}
+    作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name}，对流程执行可能存在的问题的分析是{reason_analysis}
     请您根据流程的执行结果和对标目标的情况，给出可能存在的建议，如果你觉得满意可以不提供建议。
     {format_instructions}
 
@@ -187,10 +189,10 @@ def get_repaly_results_chain(input_variables):
                             streaming=True,
                             temperature=0.7)
 
-    goals_review_output_parser = PydanticOutputParser(pydantic_object=goals_review_instruction)
-    result_evalution_output_parser=PydanticOutputParser(pydantic_object=result_evalution_instruction)
-    reason_analysis_output_parser=PydanticOutputParser(pydantic_object=reason_analysis_instruction)
-    suggestion_provider_output_parser=PydanticOutputParser(pydantic_object=suggestion_provider_instruction)
+    goals_review_output_parser = JsonOutputParser(pydantic_object=goals_review_instruction)
+    result_evalution_output_parser=JsonOutputParser(pydantic_object=result_evalution_instruction)
+    reason_analysis_output_parser=JsonOutputParser(pydantic_object=reason_analysis_instruction)
+    suggestion_provider_output_parser=JsonOutputParser(pydantic_object=suggestion_provider_instruction)
 
     goals_review_prompts=PromptTemplate(template=goals_review_template, 
                             input_variables=["process_name","process_classfication","process_prompts","process_result"],
@@ -211,9 +213,11 @@ def get_repaly_results_chain(input_variables):
     suggestion_provider_chain=suggestion_provider_prompts|llm|suggestion_provider_output_parser
 
     all_chain=goals_review_chain|result_evalution_chain|reason_analysis_chain|suggestion_provider_chain
+    
     return all_chain
 
 def get_repaly_results_response(process_name,process_classfication,process_prompts,process_result):
     all_chain=get_repaly_results_chain(process_name,process_classfication,process_prompts,process_result)
-    response=all_chain.invoke(process_name,process_classfication,process_prompts,process_result).content
+    response=all_chain.invoke(process_name,process_classfication,process_prompts,process_result)
+    print(response)
     return response

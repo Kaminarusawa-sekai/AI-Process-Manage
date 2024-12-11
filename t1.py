@@ -3,13 +3,16 @@ from typing import List
 from langchain.output_parsers.openai_tools import JsonOutputKeyToolsParser
 
 from models import model_api
+import asyncio
 
 
 process_name = "1.1.4.1 定义战略愿景"
 process_classfication="1 制定愿景和战略 1.1 定义业务理念和长期愿景 1.1.4 建立战略愿景"
 templates='''
-            ## 流程名称：
-            定义战略愿景
+            
+            
+            ## 企业简介
+            {enterprise_introduction}
 
             ## 目标：
             明确企业的未来方向和长期目标
@@ -58,9 +61,16 @@ templates='''
             - **员工参与**：鼓励员工参与愿景的制定和实施过程，增强他们的认同感和责任感。
             - **灵活应变**：愿景应具备一定的灵活性，以适应外部环境的变化。
             - **持续沟通**：保持持续的沟通和宣传，确保全体员工始终了解和认同企业愿景。
-            {partial_variables}
+            
             '''
+input={
+    "enterprise_introduction":"我是一家集成企服平台服务商",
+       }
+output_names=["process_name","process_classfication","process_prompts","process_result"]
+output_types=[str,str,str,str]
+output_descriptions=["在这里填写流程的名字，即process_name","在这里填写流程的分类，即process_classfication","在这里填写上个流程的prompt，即process_prompts","在这里填写上个流程执行的结果，即process_result"]
 
-model_api.excute_and_replay(templates=templates,process_name=process_name,process_classfication=process_classfication)
+# asyncio.run(model_api.excute_and_replay(templates=templates,input_variables=input,process_name=process_name,process_classfication=process_classfication))
+model_api.excute(templates,input)
 
 

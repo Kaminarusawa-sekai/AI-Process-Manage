@@ -50,7 +50,6 @@ output_parser = PydanticOutputParser(pydantic_object=one_out)
 one_prompt_template = PromptTemplate(
     template=one_template,
     input_variables=["name", "color"],
-    output_parser=output_parser,
     partial_variables={"format_instructions": output_parser.get_format_instructions()}
 )
 introduction_chain=one_prompt_template|llm|output_parser
