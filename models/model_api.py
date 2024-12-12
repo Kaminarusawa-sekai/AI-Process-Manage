@@ -67,6 +67,7 @@ def get_base_chain(templates:str,input_variables_names:List,output_names:List[st
 
 def excute(templates,input_variables:dict=None,output_name:str=None,output_type:type=None,output_description:str=None):
     if input_variables==None:
+        templates="你是一个流程的执行者，你需要按照给你的目标以及步骤完成流程的执行，并且给出具体的结果"
         chain=get_base_chain(templates,None,output_name,output_type,output_description)
         response = chain.invoke({}).content  
     else:
