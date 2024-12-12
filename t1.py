@@ -15,9 +15,7 @@ templates='''
             {enterprise_introduction}
 
             ## 目标：
-            明确企业的未来方向和长期目标
-            为企业的发展提供明确的指导方针
-            激励和统一全体员工的努力和行动
+            给出一份可以明确企业的未来方向和长期目标，成为企业的发展提供明确的指导方针，激励和统一全体员工的努力和行动的愿景方案
 
             ## 步骤：
 
@@ -69,8 +67,9 @@ input={
 output_names=["process_name","process_classfication","process_prompts","process_result"]
 output_types=[str,str,str,str]
 output_descriptions=["在这里填写流程的名字，即process_name","在这里填写流程的分类，即process_classfication","在这里填写上个流程的prompt，即process_prompts","在这里填写上个流程执行的结果，即process_result"]
-
-# asyncio.run(model_api.excute_and_replay(templates=templates,input_variables=input,process_name=process_name,process_classfication=process_classfication))
 model_api.excute(templates,input)
+asyncio.run(model_api.excute_and_replay(templates=templates,input_variables=input,process_name=process_name,process_classfication=process_classfication))
+# model_api.excute_and_replay(templates=templates,input_variables=input,process_name=process_name,process_classfication=process_classfication)
+
 
 

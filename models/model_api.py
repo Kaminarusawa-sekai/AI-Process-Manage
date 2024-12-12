@@ -66,11 +66,13 @@ def get_base_chain(templates:str,input_variables_names:List,output_names:List[st
     return chain
 
 def excute(templates,input_variables:dict=None,output_name:str=None,output_type:type=None,output_description:str=None):
+    templates="你是一个流程的执行者，你需要按照给出的步骤完成你的思考，从而完美完成给你的目标流程的执行，并且给出一份符合目标的结果，注意结果中不需要出现你的思考过程，如果有，你要重新读一遍目标并将内容总结一遍再输出"+templates
     if input_variables==None:
-        templates="你是一个流程的执行者，你需要按照给你的目标以及步骤完成流程的执行，并且给出具体的结果"
+        
         chain=get_base_chain(templates,None,output_name,output_type,output_description)
         response = chain.invoke({}).content  
     else:
+        
         chain=get_base_chain(templates,input_variables.keys,output_name,output_type,output_description)    
         response = chain.invoke(input_variables).content
     print(response)
@@ -105,8 +107,8 @@ async def excute_and_replay(templates,input_variables:dict={},process_name:str=N
     # response=replay_chain.invoke(response_1)
     # asyncio.run(chain.astream_log(input_variables))
     
-    async for event in chain.astream_events(input_variables,version="v2"):
-        print(event)
+    # async for event in chain.astream_events(input_variables,version="v2"):
+    #     print(event)
     response=chain.invoke(input_variables)
     print(response)
     return response

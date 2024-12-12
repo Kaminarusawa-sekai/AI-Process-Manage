@@ -146,7 +146,7 @@ def get_repaly_results_chain(input_variables):
 
     suggestion_provider_template = """
     作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name}，对流程执行可能存在的问题的分析是{reason_analysis}
-    请您根据流程的执行结果和对标目标的情况，给出可能存在的建议，如果你觉得满意可以不提供建议。
+    请您根据流程的执行结果和对标目标的情况，给出可能的对Prompts进行修改的建议或者是需要增加额外流程的建议，如果你觉得满意可以不提供建议。
     {format_instructions}
 
     请确保您的总结和建议按照以下思路：
