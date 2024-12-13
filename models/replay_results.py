@@ -22,16 +22,19 @@ print(EMBEDDING_URL)
 class goals_review_instruction(BaseModel):
     process_name:str=Field(description="在这里填写流程的名字，即process_name")
     process_classfication:str= Field(description="在这里填写流程的分类，即process_classfication")
+    process_prompts:str=Field(description="在这里填写流程的原定目标，即process_prompts")
     goals_reviews: str = Field(description="与目标对比的结果")
 
 class result_evalution_instruction(BaseModel):
     process_name:str=Field(description="在这里填写流程的名字，即process_name")
     process_classfication:str= Field(description="在这里填写流程的分类，即process_classfication")
+    process_prompts:str=Field(description="在这里填写流程的原定目标，即process_prompts")
     result_evalutions:str=Field(description="流程的结果的状况是")
 
 class reason_analysis_instruction(BaseModel):
     process_name:str=Field(description="在这里填写流程的名字，即process_name")
     process_classfication:str= Field(description="在这里填写流程的分类，即process_classfication")
+    process_prompts:str=Field(description="在这里填写流程的原定目标，即process_prompts")
     reason_analysis:str=Field(description="出现问题的原因是")
 
 class suggestion_provider_instruction(BaseModel):
@@ -72,7 +75,7 @@ def get_repaly_results_chain(input_variables):
     """
 
     result_evalution_template = """
-    作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name}，对标目标的情况是{goals_reviews}
+    作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name}，流程的原定目标是{process_prompts}，对标目标的情况是{goals_reviews}
     请您根据流程的执行结果和对标目标的情况，评估流程的结果的状况。
     {format_instructions}
 
@@ -106,7 +109,7 @@ def get_repaly_results_chain(input_variables):
 
 
     reason_analysis_template = """
-    作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name},流程执行下来的评估情况是{result_evalutions}
+    作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name},流程的原定目标是{process_prompts}，流程执行下来的评估情况是{result_evalutions}
     请您根据流程的执行结果和流程评估情况，评估出现问题的原因。
     {format_instructions}
 
@@ -145,8 +148,9 @@ def get_repaly_results_chain(input_variables):
     """
 
     suggestion_provider_template = """
-    作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name}，对流程执行可能存在的问题的分析是{reason_analysis}
-    请您根据流程的执行结果和对标目标的情况，给出可能的对Prompts进行修改的建议或者是需要增加额外流程的建议，如果你觉得满意可以不提供建议。
+    作为一位资深的企业服务专家，您的一位同事刚刚完成了一项业务。这项业务是关于{process_classfication}的{process_name}，流程的原定prompts是{process_prompts}，对流程执行可能存在的问题的分析是{reason_analysis}
+    请您根据流程的执行结果和对标目标的情况，按照给出的步骤完成你的思考，给出可能的对Prompts进行的修改并返回且仅需要返回修改后的prompts，或者是需要增加额外流程的建议，不需要给出其他建议，
+    注意结果中不需要出现你的思考过程，如果有，你要重新读一遍目标并将内容总结一遍再输出，如果你觉得满意可以不提供建议。
     {format_instructions}
 
     请确保您的总结和建议按照以下思路：

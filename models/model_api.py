@@ -88,7 +88,10 @@ async def excute_and_replay(templates,input_variables:dict={},process_name:str=N
     #     process_prompts=(str, Field(..., description="在这里填写上个流程的prompt，即process_prompts")),
     #     process_result=(str, Field(..., description="在这里填写上个流程执行的结果，即process_result")),
     # )
+    
     templates="## 流程名称："+process_name+ "/n ## 流程分类 "+process_classfication+templates
+    templates="你是一个流程的执行者，你需要按照给出的步骤完成你的思考，从而完美完成给你的目标流程的执行，并且给出一份符合目标的结果，注意结果中不需要出现你的思考过程，如果有，你要重新读一遍目标并将内容总结一遍再输出"+templates
+    
     output_names=["process_name","process_classfication","process_prompts","process_result"]
     output_types=[str,str,str,str]
     output_descriptions=["在这里填写流程的名字，即process_name","在这里填写流程的分类，即process_classfication","在这里填写上个流程的prompt，即process_prompts","在这里填写上个流程执行的结果，即process_result"]
