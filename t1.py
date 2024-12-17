@@ -62,7 +62,7 @@ templates='''
             
             '''
 input={
-    "enterprise_introduction":"我是一家集成企服平台服务商",
+    "enterprise_introduction":"中科蓝吧数字科技（苏州）有限公司是一家AI企服领域的科创型企业。公司以AI为核心驱动力，通过行业化AI模型、场景化AI能力，为企业量身打造高效、智能的AI转型升级方案，为企业降本增效、全新发展注入强劲的AI动能。",
        }
 output_names=["process_name","process_classfication","process_prompts","process_result"]
 output_types=[str,str,str,str]

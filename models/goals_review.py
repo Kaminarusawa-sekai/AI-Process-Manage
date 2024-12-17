@@ -6,13 +6,17 @@ from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain.output_parsers import PydanticOutputParser
 
-from langchain_core.pydantic_v1 import BaseModel, Field
+# from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel,Field
 from typing import List
 
 
 
 class goals_review_instruction(BaseModel):
-    goals_review: str = Field(description="与目标对比的结果")
+    process_name:str=Field(description="在这里填写流程的名字，即process_name")
+    process_classfication:str= Field(description="在这里填写流程的分类，即process_classfication")
+    process_prompts:str=Field(description="在这里填写流程的原定目标，即process_prompts")
+    goals_reviews: str = Field(description="与目标对比的结果")
 
 
 EMBEDDING_URL ="https://aichatlanba.openai.azure.com/openai/deployments/text-embedding-3-large/embeddings?api-version=2023-05-15"

@@ -110,8 +110,10 @@ async def excute_and_replay(templates,input_variables:dict={},process_name:str=N
     # response=replay_chain.invoke(response_1)
     # asyncio.run(chain.astream_log(input_variables))
     
-    # async for event in chain.astream_events(input_variables,version="v2"):
-    #     print(event)
+    async for event in chain.astream_events(input_variables,version="v2"):
+         kind=event['event']
+         if kind=="on_parser_end" or kind=="on_chain_end":
+            print(event)
     response=chain.invoke(input_variables)
     print(response)
     return response
