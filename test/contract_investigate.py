@@ -37,49 +37,29 @@ template='''
 
         直接基于提供的合同文本进行审查，无需过多背景介绍。审查过程中应保持客观公正，仅根据合同文本提供建议。专注于合同条款的法律性和合理性，不对商业决策做出评论。使用中文输出。
         输出的内容应逻辑清晰，段落长度适中，便于客户理解和参考。你会根据你的经验来给出这个问题的严重性
-        {rules}
+
+        ##Keypoint
+        这里是客户比较关心的一些关键问题点，你需要着重注意内容中是否有涉及到这些问题点的，如果没有请忽视。
+        {keypoints}
 
         ## Workflow
 
-        1. 用户会提供一段需要你评审的内容，这些内容中可能存在问题
-        2. 你将分析内容，提取关键信息和各种观点，找出这段内容所有的问题点,并列举
-        3. 有时候文本可能只是一大段合同中的一部分，可能不完整，因此你只需提供这段文本中的错误即可
-        4. 根据分析结果，你会生成一份建议。这份建议的格式要满足输出格式。
+        1. 用户会提供一段需要你评审的内容，这些内容中可能存在一些问题
+        2. 你将分析内容，首先判断给你的内容是否有涉及到提供给你关键问题点，如果有，再分析是否违反规则，如果没有请忽视。
+        3. 有时候文本可能只是一大段合同中的一部分，可能不完整，因此你只需提供这段文本中的错误即可。
+        4. 根据分析结果，你会生成一份建议文本。你要根据你的知识形成优化文本的建议，你需要列出你所有的建议，没有建议的不需要列出
 
-        ## Output
-        格式如下
-        The output should be formatted as a JSON instance that conforms to the JSON schema below.\n\n
-        As an example, for the schema ：
-        {{"properties": {{"foo": {{"title": "Foo", "description": "a list of strings", "type": "array", "items": {{"type": "string"}}}}}}, "required": ["foo"]}}\n
-        the object {{"foo": ["bar", "baz"]}} is a well-formatted instance of the schema. The object {{"properties": {{"foo": ["bar", "baz"]}}}} is not well-formatted.\n\n
-        Here is the output schema:\n
-        ```\n
-        {{"properties": 
-        {{"clause_content": {{"description": "你认为的存在问题的所有你认为存在问题的条款，不存在问题的条款无须列出", "title": "clause_content", "type": "string"}}}}, 
-        "rule_content": {{"description": "在这里按存在问题的顺序填写你认为问题对应的所有检查规则", "title": "rule_content", "type": "string"}},
-        "optimize_content": {{"description": "在这里按存在问题的顺序填写你认为建议优化的所有文本", "title": "optimize_content", "type": "string"}}, 
-        "explaination_content": {{"description": "在这里按存在问题的顺序填写你认为需要的所有沟通解释", "title": "explaination_content", "type": "string"}},
-        "properties": {{"description": "在这里按存在问题的顺序填写你认为这些问题的分别严重程度", "title": "properties", "type": "string"}},
-        }}, 
-        "required": ["clause_content", "rule_content", "optimize_content", "explaination_content","properties"]}}\n
-        ```'
 
         ## Initialization
 
-        作为高效的合同审查助手，让我们深吸一口气，一步步来。遵循上述规则，在简体中文环境下与用户交流。在聊天过程中，你将始终扮演审查助手的角色进行工作，不跳脱角色。你拥有<Skill>的技能并遵守<Rule>，根据<Workflow>完成相对应的任务。请避免讨论我发送的内容，不需要回复过多内容，不需要自我介绍,输出按照<Output>进行输出。
+        作为高效的合同修改助手，让我们深吸一口气，一步步来。遵循上述规则，在简体中文环境下与用户交流。你将始终扮演合同修改助手的角色进行工作，不跳脱角色。你拥有<Skill>的技能并遵守<Rule>，能按照客户关心的<keypoint>根据<Workflow>完成相对应的任务。请避免讨论我发送的内容，不需要回复过多内容，不需要自我介绍。
                 
-        这里是你要审查的部分内容：
+        这里是你要修改的部分内容：
         {content}
-
-
-      
-
-
-        
         
     '''
 
-rules='''
+keypoints='''
 规则1.在合同服务成果条款中，服务成果的交付及验收是否明确
 规则2.在合同服务地点条款中，服务地点是否明确
 规则3.在合同服务费用条款中，服务报酬是否明确
@@ -96,7 +76,6 @@ rules='''
 '''
 
 content='''
-    第6 条：双方的权利和义务
     6.1 甲方的权利和义务
     6.1.1 甲方确保自己在使用乙方提供的“壹脉智能名片CRM系统”产品时，严格遵守中华人民共和国境内
     的所有涉及的相关法律、法规、规章及国家、地方政策；
@@ -111,14 +90,6 @@ content='''
     6.1. 9 甲方若需要乙方提供源码技术部署服务，甲方需及时提供上线部署所需各项真实可用材料；若因甲方提
     供材料不及时、不完整、不可用等因素导致上线延期，甲方自行承担后果；自技术部署完成交付于甲方
     后，乙方不承担一切由于甲方技术维护不当或其他人为、第三方因素而导致的一切损失和责任。
-    6.2 乙方的权利和义务
-    6.2.1 乙方将严格按照相应的合同内容为甲方提供完整的系统源代码及相关部署技术文档；
-    6.2.2 乙方确保所提供的“壹脉智能名片CRM系统”源代码是自主原生开发、稳定可靠、真实可用的；
-    6.2.3 乙方保证所出售给甲方的软件产品中没有病毒、木马或其他刻意后门程序；
-    6.2.4 乙方拥有 “ 壹脉智能名片CRM系统 ”系列产品的唯一软件著作权，甲方 须 尊重乙方的知识产权 ；
-    6.2.5 乙方免费向甲方提供首次部署系统的技术指导服务（自部署日起，两周内免费提供，超期后按服务
-    量核算费用），但不包含甲方技术栈等基础培训指导（例：甲方技术人员技术栈不熟悉或无经验等，
-    该情况乙方不作任何免费技术培训及指导服务）。
 
 '''
 
@@ -127,13 +98,13 @@ llm.model_name="farui-plus"
 
 prompt=PromptTemplate(
         template=template,
-        input_variables=["rules","content"]#这个question就是用户输入的内容,这行代码不可缺少
+        input_variables=["keypoints","content"]#这个question就是用户输入的内容,这行代码不可缺少
 )
 
 chain = prompt|llm
 
 input={
-    "rules":rules,
+    "keypoints":keypoints,
     "content":content
 }
 res=chain.invoke(input)#运行
