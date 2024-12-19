@@ -68,7 +68,7 @@ output_names=["process_name","process_classfication","process_prompts","process_
 output_types=[str,str,str,str]
 output_descriptions=["在这里填写流程的名字，即process_name","在这里填写流程的分类，即process_classfication","在这里填写上个流程的prompt，即process_prompts","在这里填写上个流程执行的结果，即process_result"]
 model_api.excute(templates,input)
-asyncio.run(model_api.excute_and_replay(templates=templates,input_variables=input,process_name=process_name,process_classfication=process_classfication))
+# asyncio.run(model_api.excute_and_replay(templates=templates,input_variables=input,process_name=process_name,process_classfication=process_classfication))
 # model_api.excute_and_replay(templates=templates,input_variables=input,process_name=process_name,process_classfication=process_classfication)
 
 
