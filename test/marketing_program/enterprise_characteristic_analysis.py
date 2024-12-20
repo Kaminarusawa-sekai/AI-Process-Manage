@@ -67,6 +67,7 @@ def get_enterprise_characteristic_analysis(product_content):
     }
     res=chain.invoke(input)#运行
     print(res)#打印结果
+    return res
 
 
 

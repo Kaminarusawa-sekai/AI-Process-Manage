@@ -67,6 +67,7 @@ def get_enterprise_competitiveness_analysis(enterprise_character_analysis):
     }
     res=chain.invoke(input)#运行
     print(res)#打印结果
+    return res
 
 
 

@@ -1,24 +1,10 @@
-
-
-from langchain_community.llms.tongyi import Tongyi
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
-
-
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
-# from langchain_openai import OpenAI
-
-from pathlib import Path
 from openai import OpenAI
 
 
-
-DASHSCOPE_API_KEY="sk-a48a1d84e015410292d07021f60b9acb"
-import os
-os.environ["DASHSCOPE_API_KEY"] = DASHSCOPE_API_KEY
-
-
+client = OpenAI(
+    api_key="sk-a48a1d84e015410292d07021f60b9acb",  # 替换成真实DashScope的API_KEY
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",  # 填写DashScopebase_url
+)
 
 
 template='''
@@ -49,41 +35,45 @@ template='''
             作为专业的作为专业的战略规划师，，让我们有条不紊地进行工作。遵循上述规则，为我提供一份完整的企业战略报告
             你拥有<Skill>的技能并遵守<Rule>，根据<Workflow>完成相对应的任务。请避免讨论我发送的内容，不需要回复过多内容，不需要自我介绍
 
+        
+
+      
+    '''
+
+
+def get_enterprise_strategic_vision_long(identify_competitors,economic_analysis,political_and_regulatory_analysis,enterprise_characteristic_analysis,enterprises_competitiveness_analysis):
+    
+    input=''''
         以下是你需要分析的内容：
         {identify_competitors} = "竞争对手的具体描述"
         {economic_analysis} = "经济环境的具体描述"
         {political_and_regulatory_analysis} = "政策法规的具体描述"
         {enterprise_characteristic_analysis} = "企业定位的具体描述"
         {enterprises_competitiveness_analysis} = "企业核心竞争力的具体描述"
-
-      
     '''
-
-
-
-
-llm=Tongyi(model_name="qwen-plus",temperature=1)
-
-
-prompt=PromptTemplate(
-        template=template,
-        input_variables=["identify_competitors","economic_analysis","political_and_regulatory_analysis","enterprise_characteristic_analysis","enterprises_competitiveness_analysis"]#这个question就是用户输入的内容,这行代码不可缺少
-)
-
-chain = prompt|llm
-
-
-def get_enterprise_strategic_vision(identify_competitors,economic_analysis,political_and_regulatory_analysis,enterprise_characteristic_analysis,enterprises_competitiveness_analysis):
-    input={
-        "identify_competitors":identify_competitors,
-        "economic_analysis":economic_analysis,
-        "political_and_regulatory_analysis":political_and_regulatory_analysis,
-        "enterprise_characteristic_analysis":enterprise_characteristic_analysis,
-        "enterprises_competitiveness_analysis":enterprises_competitiveness_analysis,
-    }
     
-    res=chain.invoke(input)#运行
-    print(res)#打印结果
+    content=input.format(identify_competitors=identify_competitors,economic_analysis=economic_analysis,political_and_regulatory_analysis=political_and_regulatory_analysis,enterprise_characteristic_analysis=enterprise_characteristic_analysis,enterprises_competitiveness_analysis=enterprises_competitiveness_analysis)
+    completion = client.chat.completions.create(
+        model="qwen-long",
+        messages=[
+            {
+                'role': 'system',
+                'content': template
+            },
+            {
+                'role': 'system',
+                'content': content
+            },
+            {
+                'role': 'user',
+                'content': '给我一份完整的战略愿景方案'
+            }
+        ],
+        stream=False
+    )
+
+    res=completion.choices[0].message.dict()["content"]
+    print(res)
     return res
 
 
@@ -308,6 +298,6 @@ if __name__ == '__main__':
         ### 核心竞争力总结
         中科蓝吧数字科技（苏州）有限公司的核心竞争力在于其强大的AI技术研发能力、定制化的AI解决方案以及对中小企业市场的精准定位。公司在技术创新、客户服务和市场洞察方面表现出色，具备显著的竞争优势。然而，过度依赖中小企业市场可能带来风险，建议公司通过多元化市场策略和持续的技术创新来应对潜在挑战，进一步巩固其在AI企服领域的领先地位。
     '''
-    get_enterprise_strategic_vision(identify_competitors,economic_analysis,political_and_regulatory_analysis,enterprise_characteristic_analysis,enterprises_competitiveness_analysis)
+    get_enterprise_strategic_vision_long(identify_competitors,economic_analysis,political_and_regulatory_analysis,enterprise_characteristic_analysis,enterprises_competitiveness_analysis)
 
 

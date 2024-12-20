@@ -65,6 +65,7 @@ def get_political_and_regulatory_analysis(user_portrait):
     }
     res=chain.invoke(input)#运行
     print(res)#打印结果
+    return res
 
 
 

@@ -66,6 +66,7 @@ def get_identify_compeitors(user_portrait):
     }
     res=chain.invoke(input)#运行
     print(res)#打印结果
+    return res
 
 
 

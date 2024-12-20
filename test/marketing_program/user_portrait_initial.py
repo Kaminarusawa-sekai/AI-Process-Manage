@@ -61,6 +61,7 @@ def get_user_portrait_initial(product_content):
     }
     res=chain.invoke(input)#运行
     print(res)#打印结果
+    return res
 
 if __name__ == '__main__':
     product_content='''
