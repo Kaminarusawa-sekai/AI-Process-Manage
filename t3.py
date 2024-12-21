@@ -1,77 +1,50 @@
-
-
-from langchain_community.llms.tongyi import Tongyi
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
-
-
-DASHSCOPE_API_KEY="sk-a48a1d84e015410292d07021f60b9acb"
 import os
-os.environ["DASHSCOPE_API_KEY"] = DASHSCOPE_API_KEY
+import dashscope
+
 
 
 
 
 template='''
-        你是一位专业的市场竞争分析师，擅长通过深入分析市场环境、企业产品和服务特点、客户反馈等信息来识别潜在的竞争对手。你的任务是帮助企业全面了解其所在市场的竞争态势，并为制定有效的竞争策略提供依据。
+       你是一位专业的经济趋势分析师，擅长通过深入分析宏观经济环境、行业动态和企业产品特点，来评估经济变化对企业产品的影响。你的任务是帮助企业理解当前及未来的经济趋势，并提供具体的策略建议，以优化产品策略，应对潜在挑战，抓住发展机遇。
         ### Skills
-            市场调研：收集并分析市场数据，了解行业趋势、市场规模和发展动态。
-            产品对比：详细比较企业与潜在竞争对手的产品和服务特点，包括功能、价格、质量、用户体验等。
-            客户洞察：分析用户反馈、评论、使用习惯等信息，识别客户的偏好和选择标准。
-            竞争评估：评估潜在竞争对手的实力，包括市场份额、品牌影响力、财务状况、创新能力等。
-            风险分析：识别来自竞争对手的潜在威胁和挑战，评估对企业的影响。
-            战略建议：提供具体的策略建议，帮助企业应对竞争，提升市场地位。
+            经济分析：深入了解宏观经济指标（如GDP增长率、通货膨胀率、利率等）及其对企业产品的影响,你需要联网搜索以提供2024年12月的最新的指标。
+            行业研究：分析所在行业的动态，包括市场规模、增长趋势、竞争格局和技术进步,你需要联网搜索以提供最新的指标。
+            产品评估：结合经济趋势和行业动态，评估企业产品的需求、价格敏感性、销售渠道和客户偏好,你需要联网搜索以提供最新的指标。
+            风险识别：识别经济波动带来的潜在风险，评估其对企业产品的影响程度。
+            机会捕捉：发现经济变化中的新机遇，为企业产品的发展提供新的方向。
+            策略建议：基于上述分析结果，提供具体的产品策略建议，帮助企业应对经济变化。
         ### Rules
             保持专业：在分析过程中保持专业态度，确保所有行动都有据可依。
-            数据驱动：基于实际数据和事实进行分析，避免主观臆断。
+            数据驱动：基于实际数据和事实进行分析，避免主观臆断，无法确定的可以搜索来获得。
             全面覆盖：确保分析涵盖所有相关方面，不遗漏重要信息。
             直接输出：专注于具体的操作和任务执行，不需要过多讨论或解释。
             逻辑清晰：输出的内容应逻辑连贯，易于理解和应用。
         ### Workflow
             用户提供关于企业及其产品的详细描述，包括但不限于市场定位、目标客户群体、产品特点等。
-            你将收集并分析市场数据，了解行业趋势和发展动态。
-            深入研究企业的主要产品和服务，与市场上类似的产品和服务进行对比。
-            分析用户反馈，识别客户的偏好和选择标准。
-            评估潜在竞争对手的实力，包括市场份额、品牌影响力、财务状况、创新能力等。
-            识别来自竞争对手的潜在威胁和挑战，评估对企业的影响。
-            提供具体的策略建议，帮助企业应对竞争，提升市场地位。
+            你将收集并分析宏观经济数据，了解当前及未来一段时间内的经济趋势。
+            深入研究所在行业的动态，评估行业受经济变化的影响。
+            结合经济趋势和行业动态，评估企业产品的需求、价格敏感性、销售渠道和客户偏好。
+            识别经济波动带来的潜在风险，评估其对企业产品的影响程度。
+            发现经济变化中的新机遇，为企业产品的发展提供新的方向。
+            提供具体的产品策略建议，帮助企业应对经济变化，提升市场竞争力。
         
         ### Initialization
-            作为专业的市场竞争分析师，让我们有条不紊地进行工作。遵循上述规则，为我提供一份完整的竞争分析报告
+            作为专业的经济趋势分析师，让我们有条不紊地进行工作。遵循上述规则，为我提供一份完整的经济趋势对产品影响的报告
             你拥有<Skill>的技能并遵守<Rule>，根据<Workflow>完成相对应的任务。请避免讨论我发送的内容，不需要回复过多内容，不需要自我介绍
 
-        以下是你需要分析的内容：
-        {user_portrait}
+        
+
+        
 
       
     '''
 
-
-
-
-llm=Tongyi(model_name="qwen-plus",temperature=1,enable_search=True)
-
-
-prompt=PromptTemplate(
-        template=template,
-        input_variables=["user_portrait"]#这个question就是用户输入的内容,这行代码不可缺少
-)
-
-chain = prompt|llm
-
-
-def get_identify_compeitors(user_portrait):
-    input={
-        "user_portrait":user_portrait,
-    }
-    res=chain.invoke(input)#运行
-    print(res)#打印结果
-    return res
-
-
-
-if __name__ == '__main__':
-    user_portrait='''
+input=''''
+    以下是你需要分析的内容：
+    {user_portrait}="企业的基本描述"
+'''
+user_portrait='''
         ### 用户画像构建报告
 
         #### 产品分析
@@ -111,7 +84,20 @@ if __name__ == '__main__':
         基于上述分析，我们构建的客户画像是一群年龄在25-55岁之间的中小企业管理人员，他们追求效率和成本效益，倾向于使用简单易用且提供定制化服务的软件产品。他们关注数据安全和隐私保 护，并且对新技术持开放态度。他们主要来自IT、教育、医疗、零售等行业，并对特定行业的法规有较高的敏感性。
 
         以上是根据提供的信息构建的用户画像报告，根据实际数据和事实进行分析，确保逻辑清晰且易于理解和应用。如有需要，可以根据实际情况调整和完善画像内容。
-        '''
-    get_identify_compeitors(user_portrait)
+        '''   
+content=input.format(user_portrait=user_portrait)
 
+messages = [
+    {'role': 'system', 'content': template},
+    {'role': 'user', 'content': content}
+    ]
 
+response = dashscope.Generation.call(
+    # 若没有配置环境变量，请用百炼API Key将下行替换为：api_key="sk-xxx",
+    api_key="sk-a48a1d84e015410292d07021f60b9acb",
+    model="qwen-plus", # 模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
+    messages=messages,
+    result_format='message',
+    enable_search=True
+    )
+print(response.output.choices[0].message.content)

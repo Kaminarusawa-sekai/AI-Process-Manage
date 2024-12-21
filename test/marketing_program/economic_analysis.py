@@ -47,7 +47,7 @@ template='''
     '''
 
 
-llm=Tongyi(model_name="qwen-plus",temperature=1)
+llm=Tongyi(model_name="qwen-plus",temperature=1,enable_search=True)
 
 
 prompt=PromptTemplate(
