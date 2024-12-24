@@ -4,16 +4,11 @@ from langchain_community.llms.tongyi import Tongyi
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 
-import datetime
+
 
 DASHSCOPE_API_KEY="sk-a48a1d84e015410292d07021f60b9acb"
 import os
 os.environ["DASHSCOPE_API_KEY"] = DASHSCOPE_API_KEY
-
-import Internet_search_thing
-
-
-
 
 
 template='''
@@ -58,44 +53,26 @@ template='''
             撰写研究报告：编写一份详尽的报告，总结宏观经济和行业动态对企业产品的影响，并附带具体策略建议。
             以下是你需要分析的内容：
     {product_introduction}="企业的基本描述"
-    {economic_introduction}="经济环境的描述"
-    {industry_history}="行业历史回顾"
-    {industry_progress}="行业目前进展"
+
 
       
     '''
     
-
-
-example_str = ''
-
 llm=Tongyi(model_name="qwen-plus",temperature=1)
 
 
 prompt=PromptTemplate(
         template=template,
-        input_variables=["product_introduction","economic_introduction","industry_history","industry_progress"]#这个question就是用户输入的内容,这行代码不可缺少
+        input_variables=["product_introduction"]#这个question就是用户输入的内容,这行代码不可缺少
 )
 
 chain = prompt|llm
 
-def get_economic_industry_background_analysis(product_introduction,industry_classfication):
-    now = datetime.datetime.now().strftime("%Y")
-    templates_econimic="深入分析当前时间{now}关键经济指标（如GDP增长率、通货膨胀率、利率、消费者信心指数等），理解它们如何塑造{industry_classfication}行业的整体环境，并影响特定产品的市场表现。"
-    templates_history="系统回顾过去十年中对{industry_classfication}行业有重大影响的经济事件、政策变化和技术进步，分析这些因素如何塑造了当前的市场格局，以及它们对企业产品线的长期影响。"
-    template_progress="跟踪{industry_classfication}行业的最新发展，包括市场规模、增长趋势、竞争格局、技术革新和法规变化，以识别行业内的主要驱动力和挑战。"
-    templates_econimic=templates_econimic.format(now=now,industry_classfication=industry_classfication)
-    templates_history=templates_history.format(industry_classfication=industry_classfication)
-    template_progress=template_progress.format(industry_classfication=industry_classfication)
-    economic_introduction=Internet_search_thing.get_intenet_search_analysis(templates_econimic)
-    industry_history=Internet_search_thing.get_intenet_search_analysis(templates_history)
-    industry_progress=Internet_search_thing.get_intenet_search_analysis(template_progress)
+def get_economic_industry_background_analysis(product_introduction):
 
+ 
     input={
         "product_introduction":product_introduction,
-        "economic_introduction":economic_introduction,
-        "industry_history":industry_history,
-        "industry_progress":industry_progress
 
     }
     res=chain.invoke(input)#运行
@@ -113,6 +90,5 @@ if __name__ == '__main__':
 
 此外，中科蓝吧还特别注重数据安全与隐私保护，在其产品设计中融入了多项先进的安全措施，确保用户的数据资产得到充分保障。总之，中科蓝吧致力于成为企业数字化转型过程中值得信赖的合作伙伴。
         '''
-    industry_classfication="人工智能企业服务（AI企服）"
-    get_economic_industry_background_analysis(product_introduction,industry_classfication)
+    get_economic_industry_background_analysis(product_introduction)
 
