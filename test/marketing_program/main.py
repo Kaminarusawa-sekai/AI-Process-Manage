@@ -1,7 +1,11 @@
+import Internet_search_thing
+
 ## 这些部分是分析企业战略愿景的
 import user_portrait_initial 
 import Identify_competitors
 import economic_analysis
+import enconimic_industry_background_anaylsis
+
 import political_and_regulatory_analysis
 import enterprise_characteristic_analysis
 import enterprises_competitiveness_analysis
@@ -29,6 +33,7 @@ product_content='''
 
 Boss_MBTI='INFJ'
 BOSS_strengths='企业主的性格特点是坚持'
+
 
 
 user_portrait_initiasl_word=user_portrait_initial.get_user_portrait_initial(product_content)
