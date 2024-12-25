@@ -45,7 +45,7 @@ template='''
             - 探讨气候变化、资源枯竭等问题可能带来的长期挑战和机会。
 
             6. **Legal Factors (法律因素)**
-            - 审查相关行业的法律法规，特别是知识产权保护、劳动合同法、消费者权益保护等方面的规定。
+            - 审查相关行业的法律法规，特别是和行业相关的法律等方面的规定。
             - 评估新出台或即将实施的法律对企业合规成本和业务模式的影响。
             - 探讨跨国经营中不同司法管辖区之间的法律差异及应对策略。
         ### Rules
@@ -68,8 +68,8 @@ template='''
             对于历史回顾，仔细阅读提供给你的行业历史回顾，列举出相关内容，分析对于行业的意义。
             对于当前状况，仔细阅读提供给你的行业目前进展，列举出相关内容，分析对于行业的影响。
             信息整理归纳：筛选出最相关的数据点，并对其进行分类整理。
-            分析综合处理：通过对比不同来源的数据，得出有说服力的结论。
-            撰写研究报告：编写一份详尽的报告，总结宏观经济和行业动态对企业产品的影响，并附带具体策略建议。
+            分析综合处理：通过对比不同来源的数据，得出有说服力的宏观环境对于行业如何的结论。
+            撰写研究报告：编写一份详尽的报告，总结宏观环境对行业的影响，并附带具体策略建议。
             以下是你需要分析的内容：
     {product_introduction}="企业的基本描述"
     {political_introduction}="当前政治环境描述"
@@ -98,12 +98,12 @@ chain = prompt|llm
 
 def get_economic_industry_background_analysis(product_introduction,industry_classfication):
     now = datetime.datetime.now().strftime("%Y")
-    templates_political="深入分析当前时间{now}政府政策、法律法规的变化及其对{industry_classfication}行业运营的影响，探讨税收政策、贸易协定、关税、补贴等政策对行业成本结构和市场竞争的影响，识别国家或地区层面的政治稳定性和国际关系可能带来的风险与机遇。"
-    templates_econimic="深入分析当前时间{now}关键经济指标（GDP增长率、通货膨胀率、失业率、汇率波动、GDP增长率、通货膨胀率、利率、消费者信心指数等因素），理解它们如何塑造{industry_classfication}行业的整体环境，并影响特定产品的市场表现。"
-    templates_social="深入分析当前时间{now}研究消费者偏好、生活方式和社会习惯的变化趋势，对{industry_classfication}行业运营的影响。了解人口统计特征（如年龄分布、性别比例、家庭结构）对市场需求的影响。 探讨社交媒体、文化潮流以及社会价值观转变对产品接受度的作用。"
+    templates_political="深入分析当前时间{now}中国政府政策、法律法规的变化及其对{industry_classfication}行业运营的影响，探讨税收政策、贸易协定、关税、补贴等政策对行业成本结构和市场竞争的影响，识别国家或地区层面的政治稳定性和国际关系可能带来的风险与机遇。"
+    templates_econimic="深入分析当前时间{now}下中国关键经济指标，包括但不限于分析中国的GDP增长率、美元利率、中国的通货膨胀率、中国的失业率、中国的汇率波动、消费者信心指数等因素的当前状态，理解它们如何塑造{industry_classfication}行业的整体环境，并影响特定产品的市场表现。"
+    templates_social="深入分析当前时间{now}研究中国消费者偏好、生活方式和社会习惯的变化趋势，对{industry_classfication}行业运营的影响。了解人口统计特征（如年龄分布、性别比例、家庭结构）对市场需求的影响。 探讨社交媒体、文化潮流以及社会价值观转变对产品接受度的作用。"
     templates_technological="深入分析当前时间{now}技术创新的速度和技术进步对{industry_classfication}行业产品和服务的影响。探讨新兴技术（如人工智能、网络直播等）的应用前景及其对行业运营的影响。评估企业内部研发能力和外部技术合作的可能性。"
-    templates_environmental="深入分析当前时间{now}考察环保法规对{industry_classfication}行业的影响。分析消费者对绿色产品和可持续发展的关注度增加对企业战略的影响。"
-    templates_legal="深入分析当前时间{now}审查{industry_classfication}行业的法律法规，特别是知识产权保护、劳动合同法、消费者权益保护等方面的规定，评估新出台或即将实施的法律对企业合规成本和业务模式的影响。探讨跨国经营中不同司法管辖区之间的法律差异及应对策略。"
+    templates_environmental="深入分析当前时间{now}考察中国环保法规对{industry_classfication}行业的影响。分析消费者对绿色产品和可持续发展的关注度增加对企业战略的影响。"
+    templates_legal="深入分析当前时间{now}审查{industry_classfication}行业的中国的法律法规，特别是直接影响行业等方面的规定，评估新出台或即将实施的法律对企业合规成本和业务模式的影响。"
    
     templates_political=templates_political.format(now=now,industry_classfication=industry_classfication)
     templates_econimic=templates_econimic.format(now=now,industry_classfication=industry_classfication)

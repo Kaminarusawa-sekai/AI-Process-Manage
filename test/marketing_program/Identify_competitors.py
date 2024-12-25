@@ -3,6 +3,8 @@
 from langchain_community.llms.tongyi import Tongyi
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
+import datetime
+
 
 
 DASHSCOPE_API_KEY="sk-a48a1d84e015410292d07021f60b9acb"
@@ -10,7 +12,7 @@ import os
 os.environ["DASHSCOPE_API_KEY"] = DASHSCOPE_API_KEY
 
 
-
+import Internet_search_thing
 
 template='''
         你是一位专业的市场竞争分析师，擅长通过深入分析市场环境、企业产品和服务特点、客户反馈等信息来识别潜在的竞争对手。你的任务是帮助企业全面了解其所在市场的竞争态势，并为制定有效的竞争策略提供依据。
@@ -41,7 +43,7 @@ template='''
             你拥有<Skill>的技能并遵守<Rule>，根据<Workflow>完成相对应的任务。请避免讨论我发送的内容，不需要回复过多内容，不需要自我介绍
 
         以下是你需要分析的内容：
-        {user_portrait}
+        {search_content}
 
       
     '''
@@ -54,15 +56,45 @@ llm=Tongyi(model_name="qwen-plus",temperature=1,enable_search=True)
 
 prompt=PromptTemplate(
         template=template,
-        input_variables=["user_portrait"]#这个question就是用户输入的内容,这行代码不可缺少
+        input_variables=["search_content"]#这个question就是用户输入的内容,这行代码不可缺少
 )
 
 chain = prompt|llm
 
 
-def get_identify_compeitors(user_portrait):
+def get_identify_compeitors(search_content,industry_classfication):
+    now = datetime.datetime.now().strftime("%Y")
+
+    templates_serach='''
+    深入分析当前时间{now}中国在{industry_classfication}行业领域涉及的公司，包括头部的以及非头部的。收集并分析市场数据，了解行业趋势、市场规模和发展动态。详细列举这些企业的产品和服务特点，包括功能、价格、质量、用户体验等。同时，1. **Strengths (优势)**
+   - 识别竞争对手的核心竞争力，如品牌知名度、市场份额、产品质量、技术创新能力等。
+   - 分析其供应链管理、成本结构、运营效率等方面的优势。
+   - 探讨其客户基础、销售渠道、营销策略的成功之处。
+   - 考察其人力资源管理和企业文化的特点。
+
+2. **Weaknesses (劣势)**
+   - 分析竞争对手可能存在的短板，如产品线单一、成本过高、客户服务不足等。
+   - 探讨其市场响应速度、创新能力、财务健康状况等方面的弱点。
+   - 研究其组织结构或管理模式是否限制了灵活性和发展潜力。
+   - 评估其品牌形象或声誉是否有负面影响。
+
+3. **Opportunities (机会)**
+   - 发现市场上未被充分满足的需求或新兴趋势，竞争对手是否能够抓住这些机会。
+   - 探讨新技术、新平台或合作伙伴关系带来的增长可能性。
+   - 分析政策变化、法规放宽或经济复苏等因素为竞争对手提供的发展机遇。
+   - 研究消费者行为转变是否为竞争对手提供了新的市场进入点。
+
+4. **Threats (威胁)**
+   - 识别来自其他竞争者的直接挑战，包括价格战、新产品推出或市场份额争夺。
+   - 分析宏观经济环境、政治不稳定、贸易壁垒等外部因素对竞争对手构成的潜在威胁。
+   - 探讨技术变革或替代品出现的可能性及其对竞争对手业务模式的影响。
+   - 评估环保法规、知识产权争议或其他法律问题带来的风险。"
+   '''
+    templates_serach=templates_serach.format(now=now,industry_classfication=industry_classfication)
+    product_introduction=Internet_search_thing.get_intenet_search_analysis(templates_serach)
+    search_content=search_content+product_introduction
     input={
-        "user_portrait":user_portrait,
+        "search_content":search_content,
     }
     res=chain.invoke(input)#运行
     print(res)#打印结果
@@ -71,47 +103,15 @@ def get_identify_compeitors(user_portrait):
 
 
 if __name__ == '__main__':
-    user_portrait='''
-        ### 用户画像构建报告
+    search_content='''
+        根据网上查找到的信息，中科蓝吧数字科技（苏州）有限公司确实是一家专注于AI企服领域的科技创新企业。它将AI技术作为核心驱动力，通过构建行业化的AI模型和场景化的AI能力，为各类企业提供定制化的高效、智能的AI转型升级方案，旨在帮助企业降低成本、提高效率并实现创新发展。
 
-        #### 产品分析
-        我们的产品是一款面向中小企业的云端企业服务管理软件，主要功能包括营销管理和经营分析，以及一些业务辅助功能。该产品通过云服务提供，确保了数据的可访问性和实时性。产品定位为中小企业提供高效、便捷的管理工具，以提高运营效率和决策质量。
+关于产品方面，中科蓝吧提供的云端企业服务管理软件不仅面向中小企业，也适用于大型企业。该软件集成了营销管理、经营分析等核心功能，并且还提供了一系列业务辅助工具，如客户关系管理(CRM)、供应链优化、财务管理等。这些功能模块可以帮助企业在不同业务场景下更好地应用AI技术，从而提升整体运营效率和服务质量。
 
-        #### 市场调研
-        当前市场上，中小企业管理软件市场竞争激烈，主要竞争对手包括Salesforce、Zoho、钉钉等。这些竞争对手提供类似或相同的功能，但价格和定制能力各有差异。市场上存在对更加个性化和定制化服务的需求，同时也需要更具成本效益的解决方案。
-
-        #### 用户研究
-        目标客户群体主要是中小企业的管理人员和运营人员，他们关注提高工作效率和降低成本。他们可能倾向于使用简单易用、价格适中且提供定制服务的软件产品。
-
-        #### 画像构建
-        **人口统计特征**
-        - 年龄：25-55岁，主要是企业的中层管理人员和决策者。
-        - 性别：无明显偏好，男性和女性比例均衡。
-        - 教育背景：大专及以上学历，具有相关行业背景者优先。
-        - 职业：中小企业管理层，如销售经理、运营总监、财务总监等。
-        - 收入水平：中等收入，对成本效益敏感。
-
-        **心理特征**
-        - 重视效率和成本控制。
-        - 倾向于使用简单易用的产品。
-        - 寻求定制化和专业化的服务。
-        - 重视数据安全和隐私保护。
-
-        **行为模式**
-        - 习惯于通过互联网获取信息和服务。
-        - 倾向于使用移动端应用。
-        - 习惯于定期更新和升级服务。
-        - 对于新技术和新功能持开放态度。
-
-        **行业特征**
-        - 主要服务于IT、教育、医疗、零售等行业。
-        - 对于特定行业的需求和法规有较高的敏感性。
-
-        **总结**
-        基于上述分析，我们构建的客户画像是一群年龄在25-55岁之间的中小企业管理人员，他们追求效率和成本效益，倾向于使用简单易用且提供定制化服务的软件产品。他们关注数据安全和隐私保 护，并且对新技术持开放态度。他们主要来自IT、教育、医疗、零售等行业，并对特定行业的法规有较高的敏感性。
-
-        以上是根据提供的信息构建的用户画像报告，根据实际数据和事实进行分析，确保逻辑清晰且易于理解和应用。如有需要，可以根据实际情况调整和完善画像内容。
+此外，中科蓝吧还特别注重数据安全与隐私保护，在其产品设计中融入了多项先进的安全措施，确保用户的数据资产得到充分保障。总之，中科蓝吧致力于成为企业数字化转型过程中值得信赖的合作伙伴。
+        
         '''
-    get_identify_compeitors(user_portrait)
+    industry_classfication="人工智能企业服务（AI企服）"
+    get_identify_compeitors(search_content,industry_classfication)
 
 
