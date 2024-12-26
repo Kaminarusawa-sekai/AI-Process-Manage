@@ -9,6 +9,8 @@ import datetime
 DASHSCOPE_API_KEY="sk-a48a1d84e015410292d07021f60b9acb"
 import os
 os.environ["DASHSCOPE_API_KEY"] = DASHSCOPE_API_KEY
+import dashscope
+dashscope.api_key="sk-a48a1d84e015410292d07021f60b9acb"
 
 import Internet_search_thing
 
@@ -117,7 +119,9 @@ def get_economic_industry_background_analysis(product_introduction,industry_clas
     social_introduction=Internet_search_thing.get_intenet_search_analysis(templates_social)
     technological_introduction=Internet_search_thing.get_intenet_search_analysis(templates_technological)
     environmental_introduction=Internet_search_thing.get_intenet_search_analysis(templates_environmental)
-
+    
+    
+   
     llm_legal=Tongyi(model_name="farui-plus",temperature=1)
     llm_legal.model_name="farui-plus"
     prompt_legal=PromptTemplate(
@@ -139,6 +143,7 @@ def get_economic_industry_background_analysis(product_introduction,industry_clas
     }
     res=chain.invoke(input)#运行
     print(res)#打印结果
+    
     return res,political_introduction,economic_introduction,social_introduction,technological_introduction,environmental_introduction,legal_introduction
 
 
